@@ -1,0 +1,5 @@
+1:
+    - 'echo hello'
+2:
+    - 'ls'
+    - 'neofetch'

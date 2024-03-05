@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+import argparse
+import yaml
+import subprocess
+
+BLUE = '\033[94m'
+GREEN = '\033[92m'
+YELLOW = '\033[93m'
+RESET = '\033[0m'
+
+def execute_bash_commands(commands):
+    for cmd in commands:
+        subprocess.run(cmd, shell=True)
+
+def display_options(commands):
+    for number, command_list in commands.items():
+        command_string = ", ".join(command_list)
+        print(f"{BLUE}[{number}]{RESET} {GREEN}{command_string}{RESET}")
+
+def main():
+    parser = argparse.ArgumentParser(description="Execute bash commands based on YAML configuration.")
+    parser.add_argument("yaml_file", help="Path to the YAML file")
+    args = parser.parse_args()
+
+    filename = args.yaml_file
+    try:
+        with open(filename, 'r') as file:
+            yaml_data = yaml.safe_load(file)
+
+        display_options(yaml_data)
+        user_input = input(f"{YELLOW}Enter a number:{RESET} ")
+        selected_commands = yaml_data.get(int(user_input), [])
+
+        if selected_commands:
+            execute_bash_commands(selected_commands)
+        else:
+            print("No commands found for the specified number.")
+    except FileNotFoundError:
+        print(f"{RESET}File '{filename}' not found.")
+    except ValueError:
+        print(f"{RESET}Invalid input. Please enter a valid number.")
+
+if __name__ == "__main__":
+    main()
+
